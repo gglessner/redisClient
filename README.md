@@ -220,16 +220,26 @@ SECURITY AUDIT REPORT
      Description: Redis server accepts connections without authentication
      Recommendation: Enable authentication by setting a strong password
 
-  2. CVE-2018-11218 - Heap buffer overflow in ziplist (RCE possible)
-     Category: CVE
-     Description: Server version 8.0.2 is affected by CVE-2018-11218
-     Recommendation: Upgrade to a patched version
-     Evidence: https://nvd.nist.gov/vuln/detail/CVE-2018-11218
+[HIGH] Findings:
+  1. TLS Not Enabled
+     Category: Encryption
+     Description: Redis connection is not using TLS encryption
+     Recommendation: Enable TLS encryption for Redis connections in production
+
+  2. Protected Mode Disabled
+     Category: Configuration
+     Description: Redis protected-mode is not enabled
+     Recommendation: Enable protected-mode to prevent unauthorized access
+
+  3. Redis Bound to All Interfaces
+     Category: Network
+     Description: Redis is accessible on all network interfaces
+     Recommendation: Bind Redis to localhost or a private network interface
 
 SUMMARY:
-  Total findings: 29
-  Critical: 2
-  High: 6
+  Total findings: 25
+  Critical: 1
+  High: 3
   Medium: 12
   Low: 9
 ```
@@ -296,12 +306,15 @@ Value: {"user_id": 123, "permissions": ["read", "write"]}
 
 The tool includes a local CVE lookup table covering known Redis vulnerabilities:
 
-- **CVE-2018-11218**: Heap buffer overflow in ziplist (RCE possible)
-- **CVE-2020-14147**: Integer overflow in Redis HyperLogLog (DoS possible)
-- **CVE-2021-29477**: Integer overflow in Redis HyperLogLog (DoS possible)
+- **CVE-2023-28856/28857**: Memory corruption in Redis 7.0.0 through 7.0.11
+- **CVE-2022-31144**: Integer overflow in redis-cli (RCE possible)
+- **CVE-2022-24834**: Integer overflow in Redis HyperLogLog (DoS possible)
 - **CVE-2021-32626**: Integer overflow in redis-cli (RCE possible)
+- **CVE-2021-29477**: Integer overflow in Redis HyperLogLog (DoS possible)
+- **CVE-2020-14147**: Integer overflow in Redis HyperLogLog (DoS possible)
+- **CVE-2018-11218**: Heap buffer overflow in ziplist (RCE possible)
 
-The database is easily expandable by adding new entries to the `REDIS_CVE_TABLE` in the source code.
+The database is easily expandable by adding new entries to the `REDIS_CVE_TABLE` in the source code. The tool correctly identifies that recent Redis versions (like 8.0.2) are not vulnerable to older CVEs.
 
 ## Advanced Usage Scenarios
 

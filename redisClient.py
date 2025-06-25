@@ -40,8 +40,16 @@ class SecurityFinding:
 
 # Local CVE lookup table for Redis versions (expand as needed)
 REDIS_CVE_TABLE = {
-    # Example entries (expand with more CVEs as needed)
     # Format: 'version': [(CVE, description, severity, reference_url)]
+    # Only include CVEs that affect versions up to the specified version
+    '7.0.0': [
+        ('CVE-2023-28856', 'Memory corruption in Redis 7.0.0 through 7.0.11', 'HIGH', 'https://nvd.nist.gov/vuln/detail/CVE-2023-28856'),
+        ('CVE-2023-28857', 'Memory corruption in Redis 7.0.0 through 7.0.11', 'HIGH', 'https://nvd.nist.gov/vuln/detail/CVE-2023-28857'),
+    ],
+    '6.2.0': [
+        ('CVE-2022-31144', 'Integer overflow in redis-cli (RCE possible)', 'HIGH', 'https://nvd.nist.gov/vuln/detail/CVE-2022-31144'),
+        ('CVE-2022-24834', 'Integer overflow in Redis HyperLogLog (DoS possible)', 'HIGH', 'https://nvd.nist.gov/vuln/detail/CVE-2022-24834'),
+    ],
     '6.0.0': [
         ('CVE-2021-32626', 'Integer overflow in redis-cli (RCE possible)', 'HIGH', 'https://nvd.nist.gov/vuln/detail/CVE-2021-32626'),
         ('CVE-2021-29477', 'Integer overflow in Redis HyperLogLog (DoS possible)', 'HIGH', 'https://nvd.nist.gov/vuln/detail/CVE-2021-29477'),
@@ -60,7 +68,9 @@ def get_vulnerabilities_for_version(server_version):
     vulns = []
     for v, cves in REDIS_CVE_TABLE.items():
         try:
-            if version.parse(server_version) >= version.parse(v):
+            # Check if the server version is LESS THAN OR EQUAL TO the vulnerable version
+            # This means the server is vulnerable to CVEs affecting this version and below
+            if version.parse(server_version) <= version.parse(v):
                 vulns.extend(cves)
         except Exception:
             continue
